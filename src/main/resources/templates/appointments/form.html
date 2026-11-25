@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${isEdit} ? 'Reschedule Appointment' : 'Schedule Appointment')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('appointments')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar(${isEdit} ? 'Reschedule Appointment' : 'Book New Appointment')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4 mx-auto" style="max-width: 820px;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="fw-bold text-primary mb-1" th:text="${isEdit} ? 'Reschedule Appointment' : 'Schedule Patient Appointment'"></h5>
+                        <p class="text-muted small mb-0">
+                            Past slots, unavailable doctors, and double-booked patient or doctor times are automatically prevented.
+                        </p>
+                    </div>
+                    <a th:href="@{/appointments}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Back to List
+                    </a>
+                </div>
+
+                <form th:action="${isEdit} ? @{/appointments/{id}/update(id=${appointment.id})} : @{/appointments/save}"
+                      th:object="${appointment}" method="post" class="needs-validation" novalidate>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="patientId" class="form-label fw-semibold">Select Patient *</label>
+                            <select id="patientId" th:field="*{patientId}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('patientId')} ? 'is-invalid'" required>
+                                <option value="">Choose registered patient...</option>
+                                <option th:each="p : ${patients}" th:value="${p.id}"
+                                        th:text="${p.patientCode} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{patientId}">Please select a patient.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="doctorId" class="form-label fw-semibold">Select Doctor *</label>
+                            <select id="doctorId" th:field="*{doctorId}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('doctorId')} ? 'is-invalid'" required>
+                                <option value="">Choose registered doctor...</option>
+                                <option th:each="d : ${doctors}" th:value="${d.id}"
+                                        th:text="${d.doctorCode} + ' - ' + ${d.fullName} + ' (' + ${d.specialization} + ' - ' + ${d.availabilityStatus.displayName} + ')'"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{doctorId}">Please select a doctor.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appointmentDate" class="form-label fw-semibold">Appointment Date *</label>
+                            <input type="date" id="appointmentDate" th:field="*{appointmentDate}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('appointmentDate')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:errors="*{appointmentDate}">Valid future date is required.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appointmentTime" class="form-label fw-semibold">Appointment Time *</label>
+                            <input type="time" id="appointmentTime" th:field="*{appointmentTime}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('appointmentTime')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:errors="*{appointmentTime}">Appointment time is required.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="reason" class="form-label fw-semibold">Reason for Visit *</label>
+                            <input type="text" id="reason" th:field="*{reason}" placeholder="e.g. Routine consultation, follow-up review..."
+                                   class="form-control" th:classappend="${#fields.hasErrors('reason')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:errors="*{reason}">Reason for visit is required.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="notes" class="form-label fw-semibold">Additional Notes</label>
+                            <textarea id="notes" th:field="*{notes}" rows="2" class="form-control"
+                                      placeholder="Optional instructions or pre-visit notes..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <a th:href="@{/appointments}" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-calendar-check-fill me-2"></i>
+                            <span th:text="${isEdit} ? 'Save Reschedule' : 'Confirm Appointment'">Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

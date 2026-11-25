@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Appointment Management')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('appointments')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Appointment Management')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <form th:action="@{/appointments}" method="get" class="d-flex gap-2 flex-grow-1" style="max-width: 500px;">
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                               placeholder="Search by Appointment ID, Patient, or Doctor...">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a th:if="${keyword != null and !keyword.isEmpty()}" th:href="@{/appointments}" class="btn btn-light border">Reset</a>
+                    </form>
+
+                    <a th:href="@{/appointments/new}" class="btn btn-primary">
+                        <i class="bi bi-calendar-plus-fill me-2"></i>Schedule Appointment
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle hms-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>Appointment ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Date &amp; Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(appointments)}">
+                            <td colspan="7" class="text-center text-muted py-4">No appointments found.</td>
+                        </tr>
+                        <tr th:each="a : ${appointments}">
+                            <td><a th:href="@{/appointments/{id}(id=${a.id})}" class="hms-code-badge text-decoration-none" th:text="${a.appointmentCode}"></a></td>
+                            <td>
+                                <a th:href="@{/patients/{id}(id=${a.patientId})}" class="fw-semibold text-decoration-none" th:text="${a.patientName}"></a>
+                                <div class="small text-muted" th:text="${a.patientCode}"></div>
+                            </td>
+                            <td>
+                                <a th:href="@{/doctors/{id}(id=${a.doctorId})}" class="fw-semibold text-decoration-none" th:text="${a.doctorName}"></a>
+                                <div class="small text-muted" th:text="${a.doctorSpecialization}"></div>
+                            </td>
+                            <td>
+                                <div th:text="${a.appointmentDate}"></div>
+                                <small class="text-muted" th:text="${a.appointmentTime}"></small>
+                            </td>
+                            <td th:text="${a.reason}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${a.status.name() == 'SCHEDULED'} ? 'bg-primary' : (${a.status.name() == 'COMPLETED'} ? 'bg-success' : 'bg-secondary')"
+                                      th:text="${a.status.displayName}"></span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/appointments/{id}(id=${a.id})}" class="btn btn-outline-primary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:if="${a.status.name() == 'SCHEDULED'}"
+                                       th:href="@{/appointments/{id}/edit(id=${a.id})}" class="btn btn-outline-secondary" title="Reschedule">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </a>
+                                    <button th:if="${a.status.name() == 'SCHEDULED'}" type="button" class="btn btn-outline-danger" title="Cancel Appointment"
+                                            th:attr="data-confirm-action=@{/appointments/{id}/cancel(id=${a.id})},data-confirm-message='Cancel appointment ' + ${a.appointmentCode} + ' for ' + ${a.patientName} + '?'">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

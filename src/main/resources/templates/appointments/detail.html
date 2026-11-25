@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Appointment Details')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('appointments')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Appointment Details')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4 mx-auto" style="max-width: 820px;">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 pb-3 border-bottom">
+                    <div>
+                        <span class="hms-code-badge mb-2 d-inline-block" th:text="${appointment.appointmentCode}"></span>
+                        <h4 class="fw-bold mb-1" th:text="${appointment.reason}"></h4>
+                        <span class="badge"
+                              th:classappend="${appointment.status.name() == 'SCHEDULED'} ? 'bg-primary' : (${appointment.status.name() == 'COMPLETED'} ? 'bg-success' : 'bg-secondary')"
+                              th:text="${appointment.status.displayName}"></span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:if="${appointment.status.name() == 'SCHEDULED'}"
+                           th:href="@{/appointments/{id}/edit(id=${appointment.id})}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-calendar-event me-1"></i>Reschedule
+                        </a>
+                        <button th:if="${appointment.status.name() == 'SCHEDULED'}" type="button" class="btn btn-outline-danger btn-sm"
+                                th:attr="data-confirm-action=@{/appointments/{id}/cancel(id=${appointment.id})},data-confirm-message='Are you sure you want to cancel appointment ' + ${appointment.appointmentCode} + '?'">
+                            <i class="bi bi-x-circle me-1"></i>Cancel Appointment
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="text-muted small">Patient</div>
+                        <div class="fw-semibold">
+                            <a th:href="@{/patients/{id}(id=${appointment.patientId})}" class="text-decoration-none"
+                               th:text="${appointment.patientName} + ' (' + ${appointment.patientCode} + ')'"></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Doctor</div>
+                        <div class="fw-semibold">
+                            <a th:href="@{/doctors/{id}(id=${appointment.doctorId})}" class="text-decoration-none"
+                               th:text="${appointment.doctorName} + ' (' + ${appointment.doctorSpecialization} + ')'"></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Appointment Date</div>
+                        <div class="fw-semibold" th:text="${appointment.appointmentDate}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Appointment Time</div>
+                        <div class="fw-semibold" th:text="${appointment.appointmentTime}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="text-muted small">Notes</div>
+                        <div class="fw-semibold" th:text="${appointment.notes != null and !appointment.notes.isEmpty() ? appointment.notes : 'None'}"></div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded border d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" class="d-flex align-items-center gap-2">
+                        <label for="statusSelect" class="fw-semibold small mb-0">Update Status:</label>
+                        <select id="statusSelect" name="status" class="form-select form-select-sm" style="width: 170px;">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.displayName}"
+                                    th:selected="${s == appointment.status}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+
+                    <a th:href="@{/appointments}" class="btn btn-light border btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Appointments
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
