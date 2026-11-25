@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Hospital Management System - Blue & White Theme Stylesheet
+   ========================================================================== */
+
+:root {
+    --hms-primary: #0d6efd;
+    --hms-primary-dark: #0a4da8;
+    --hms-primary-light: #eaf3ff;
+    --hms-surface: #ffffff;
+    --hms-bg: #f4f8ff;
+    --hms-border: #dce7f7;
+    --hms-text: #1e293b;
+    --hms-muted: #64748b;
+    --hms-sidebar-width: 260px;
+}
+
+body {
+    font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+    background-color: var(--hms-bg);
+    color: var(--hms-text);
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.hms-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.hms-sidebar {
+    width: var(--hms-sidebar-width);
+    background: linear-gradient(180deg, #0b4ea2 0%, #0d6efd 100%);
+    color: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 18px rgba(13, 110, 253, 0.12);
+}
+
+.hms-brand {
+    padding: 1.35rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hms-brand img {
+    width: 38px;
+    height: 38px;
+}
+
+.hms-brand-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    letter-spacing: 0.2px;
+}
+
+.hms-brand-sub {
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
+.hms-nav {
+    padding: 1rem 0.75rem;
+    flex-grow: 1;
+}
+
+.hms-nav .nav-link {
+    color: rgba(255, 255, 255, 0.88);
+    padding: 0.7rem 1rem;
+    border-radius: 0.6rem;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.2s ease;
+}
+
+.hms-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+.hms-nav .nav-link.active {
+    background-color: #ffffff;
+    color: var(--hms-primary-dark);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hms-sidebar-footer {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* Main Content */
+.hms-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.hms-topbar {
+    background-color: var(--hms-surface);
+    border-bottom: 1px solid var(--hms-border);
+    padding: 0.9rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hms-content {
+    padding: 1.75rem;
+    flex-grow: 1;
+}
+
+/* Cards & Stats */
+.hms-card {
+    background-color: var(--hms-surface);
+    border: 1px solid var(--hms-border);
+    border-radius: 0.85rem;
+    box-shadow: 0 4px 14px rgba(13, 110, 253, 0.05);
+}
+
+.hms-stat-card {
+    background: var(--hms-surface);
+    border: 1px solid var(--hms-border);
+    border-left: 4px solid var(--hms-primary);
+    border-radius: 0.85rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 14px rgba(13, 110, 253, 0.05);
+    transition: transform 0.15s ease;
+}
+
+.hms-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.hms-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.75rem;
+    background-color: var(--hms-primary-light);
+    color: var(--hms-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+}
+
+.hms-table thead th {
+    background-color: var(--hms-primary-light);
+    color: var(--hms-primary-dark);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--hms-border);
+}
+
+.hms-code-badge {
+    background-color: var(--hms-primary-light);
+    color: var(--hms-primary-dark);
+    font-weight: 600;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.4rem;
+    font-size: 0.82rem;
+    font-family: Consolas, monospace;
+}
+
+/* Login Page */
+.hms-login-body {
+    background: linear-gradient(135deg, #eaf3ff 0%, #ffffff 55%, #d9e9ff 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.hms-login-card {
+    max-width: 440px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid var(--hms-border);
+    border-radius: 1rem;
+    box-shadow: 0 12px 35px rgba(13, 110, 253, 0.12);
+    overflow: hidden;
+}
+
+.hms-login-header {
+    background: linear-gradient(135deg, #0b4ea2 0%, #0d6efd 100%);
+    color: #ffffff;
+    padding: 1.75rem;
+    text-align: center;
+}
+
+@media (max-width: 991.98px) {
+    .hms-wrapper {
+        flex-direction: column;
+    }
+    .hms-sidebar {
+        width: 100%;
+    }
+    .hms-content {
+        padding: 1rem;
+    }
+}

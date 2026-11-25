@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('dashboard')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Hospital Administration Dashboard')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- 4 Core Statistics Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="hms-stat-card d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small fw-semibold text-uppercase">Total Patients</div>
+                            <div class="fs-2 fw-bold text-primary" th:text="${summary.totalPatients}">0</div>
+                        </div>
+                        <div class="hms-stat-icon"><i class="bi bi-people-fill"></i></div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="hms-stat-card d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small fw-semibold text-uppercase">Total Doctors</div>
+                            <div class="fs-2 fw-bold text-primary" th:text="${summary.totalDoctors}">0</div>
+                            <small class="text-success fw-medium" th:text="${summary.availableDoctors} + ' Available'">0 Available</small>
+                        </div>
+                        <div class="hms-stat-icon"><i class="bi bi-person-badge-fill"></i></div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="hms-stat-card d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small fw-semibold text-uppercase">Total Appointments</div>
+                            <div class="fs-2 fw-bold text-primary" th:text="${summary.totalAppointments}">0</div>
+                        </div>
+                        <div class="hms-stat-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="hms-stat-card d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small fw-semibold text-uppercase">Medical Records</div>
+                            <div class="fs-2 fw-bold text-primary" th:text="${summary.totalMedicalRecords}">0</div>
+                        </div>
+                        <div class="hms-stat-icon"><i class="bi bi-file-earmark-medical-fill"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation & Appointment Status Summary -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-7">
+                    <div class="hms-card p-4 h-100">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="bi bi-lightning-charge-fill me-2"></i>Quick Actions
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <a th:href="@{/patients/new}" class="btn btn-primary w-100 py-2 text-start">
+                                    <i class="bi bi-person-plus-fill me-2"></i>Register New Patient
+                                </a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a th:href="@{/doctors/new}" class="btn btn-outline-primary w-100 py-2 text-start">
+                                    <i class="bi bi-plus-circle-fill me-2"></i>Add New Doctor
+                                </a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a th:href="@{/appointments/new}" class="btn btn-outline-primary w-100 py-2 text-start">
+                                    <i class="bi bi-calendar-plus-fill me-2"></i>Schedule Appointment
+                                </a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a th:href="@{/medical-records/new}" class="btn btn-outline-primary w-100 py-2 text-start">
+                                    <i class="bi bi-journal-medical me-2"></i>Add Medical Record
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="hms-card p-4 h-100">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="bi bi-pie-chart-fill me-2"></i>Appointment Status Summary
+                        </h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="badge bg-primary me-2">Scheduled</span>Active Bookings</span>
+                            <strong th:text="${summary.scheduledAppointments}">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="badge bg-success me-2">Completed</span>Finished Visits</span>
+                            <strong th:text="${summary.completedAppointments}">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><span class="badge bg-secondary me-2">Cancelled</span>Cancelled Slots</span>
+                            <strong th:text="${summary.cancelledAppointments}">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments & Recent Registrations -->
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="hms-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-primary mb-0">
+                                <i class="bi bi-clock-history me-2"></i>Upcoming Appointments
+                            </h6>
+                            <a th:href="@{/appointments}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle hms-table mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Date &amp; Time</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${#lists.isEmpty(summary.upcomingAppointments)}">
+                                    <td colspan="4" class="text-center text-muted py-4">No upcoming appointments scheduled.</td>
+                                </tr>
+                                <tr th:each="apt : ${summary.upcomingAppointments}">
+                                    <td><a th:href="@{/appointments/{id}(id=${apt.id})}" class="hms-code-badge text-decoration-none" th:text="${apt.appointmentCode}"></a></td>
+                                    <td th:text="${apt.patientName}"></td>
+                                    <td th:text="${apt.doctorName}"></td>
+                                    <td>
+                                        <span th:text="${apt.appointmentDate}"></span>
+                                        <small class="text-muted" th:text="${apt.appointmentTime}"></small>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="hms-card p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-primary mb-0">
+                                <i class="bi bi-person-lines-fill me-2"></i>Recent Patient Registrations
+                            </h6>
+                            <a th:href="@{/patients}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li th:if="${#lists.isEmpty(summary.recentPatients)}" class="list-group-item text-muted text-center">
+                                No patients registered yet.
+                            </li>
+                            <li th:each="p : ${summary.recentPatients}" class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a th:href="@{/patients/{id}(id=${p.id})}" class="fw-semibold text-decoration-none" th:text="${p.fullName}"></a>
+                                    <div class="small text-muted" th:text="${p.patientCode} + ' • ' + ${p.bloodGroup}"></div>
+                                </div>
+                                <small class="text-muted" th:text="${p.registrationDate}"></small>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="hms-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-primary mb-0">
+                                <i class="bi bi-heart-pulse-fill me-2"></i>Recently Added Doctors
+                            </h6>
+                            <a th:href="@{/doctors}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li th:if="${#lists.isEmpty(summary.recentDoctors)}" class="list-group-item text-muted text-center">
+                                No doctors added yet.
+                            </li>
+                            <li th:each="d : ${summary.recentDoctors}" class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a th:href="@{/doctors/{id}(id=${d.id})}" class="fw-semibold text-decoration-none" th:text="${d.fullName}"></a>
+                                    <div class="small text-muted" th:text="${d.specialization}"></div>
+                                </div>
+                                <span class="badge"
+                                      th:classappend="${d.availabilityStatus.name() == 'AVAILABLE'} ? 'bg-success' : 'bg-secondary'"
+                                      th:text="${d.availabilityStatus.displayName}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
