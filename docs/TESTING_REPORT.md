@@ -19,7 +19,8 @@
 | `MedicalRecordServiceTest` | Medical Record Management | 4 | 4 | 0 | 0 |
 | `AdminUserDetailsServiceTest` | Authentication (Unit) | 2 | 2 | 0 | 0 |
 | `AuthenticationSecurityTest` | Authentication & Route Security | 3 | 3 | 0 | 0 |
-| **Total** | **All Modules** | **26** | **26** | **0** | **0** |
+| `WebControllersIntegrationTest` | All 14+ Thymeleaf Views, CSRF Forms & Error Pages | 3 | 3 | 0 | 0 |
+| **Total** | **All Modules** | **29** | **29** | **0** | **0** |
 
 ---
 
@@ -63,5 +64,5 @@
 ---
 
 ## 4. Verification Scope Notes
-- **Verified Automatically (`mvn test` / `mvn clean install`):** Compilation of all main and test Java classes, Thymeleaf template packaging, Spring Security configuration, and all 26 unit/MockMvc test cases.
-- **Requires Live External Services:** End-to-end MySQL persistence (`hospital_management_db`) and live browser UI walkthrough require starting MySQL 8.0 (`localhost:3306`) and running `mvn spring-boot:run`. Kanboard board creation requires a running Kanboard instance (`kanboard/kanboard_setup.py` or CSV import).
+- **Verified Automatically (`mvn test` / `mvn clean install`):** Compilation of all main and test Java classes, rendering of all 14+ Thymeleaf pages, CSRF form submissions, global exception handling, Spring Security login/route protection, and all 29 JUnit 5 / Mockito / MockMvc test cases.
+- **Requires Live External Services:** Live MySQL persistence (`MySQL80` is running on `localhost:3306`; requires setting `DB_PASSWORD` for your local `root` account before running `mvn spring-boot:run`) and Kanboard board creation (`kanboard/kanboard_setup.py` or CSV import).
