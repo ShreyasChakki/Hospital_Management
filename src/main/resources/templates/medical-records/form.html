@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${isEdit} ? 'Update Medical Record' : 'Create Medical Record')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('medical-records')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar(${isEdit} ? 'Update Medical Record' : 'New Medical Record')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4 mx-auto" style="max-width: 880px;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="fw-bold text-primary mb-1" th:text="${isEdit} ? 'Edit Clinical Record' : 'Add Patient Medical Record'"></h5>
+                        <p class="text-muted small mb-0" th:if="${isEdit}">
+                            Record ID: <span class="hms-code-badge" th:text="${record.recordCode}"></span>
+                        </p>
+                    </div>
+                    <a th:href="@{/medical-records}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Records
+                    </a>
+                </div>
+
+                <form th:action="${isEdit} ? @{/medical-records/{id}/update(id=${record.id})} : @{/medical-records/save}"
+                      th:object="${record}" method="post" class="needs-validation" novalidate>
+
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="patientId" class="form-label fw-semibold">Patient *</label>
+                            <select id="patientId" th:field="*{patientId}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('patientId')} ? 'is-invalid'" required>
+                                <option value="">Select patient...</option>
+                                <option th:each="p : ${patients}" th:value="${p.id}"
+                                        th:text="${p.patientCode} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{patientId}">Please select a patient.</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="doctorId" class="form-label fw-semibold">Attending Doctor *</label>
+                            <select id="doctorId" th:field="*{doctorId}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('doctorId')} ? 'is-invalid'" required>
+                                <option value="">Select doctor...</option>
+                                <option th:each="d : ${doctors}" th:value="${d.id}"
+                                        th:text="${d.doctorCode} + ' - ' + ${d.fullName}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{doctorId}">Please select a doctor.</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="visitDate" class="form-label fw-semibold">Visit Date *</label>
+                            <input type="date" id="visitDate" th:field="*{visitDate}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('visitDate')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:errors="*{visitDate}">Valid visit date is required.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="diagnosis" class="form-label fw-semibold">Diagnosis *</label>
+                            <input type="text" id="diagnosis" th:field="*{diagnosis}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('diagnosis')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:errors="*{diagnosis}">Diagnosis is required.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="allergies" class="form-label fw-semibold">Known Allergies</label>
+                            <input type="text" id="allergies" th:field="*{allergies}" placeholder="e.g. Penicillin, Sulfa, None" class="form-control">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="symptoms" class="form-label fw-semibold">Symptoms *</label>
+                            <textarea id="symptoms" th:field="*{symptoms}" rows="2" class="form-control"
+                                      th:classappend="${#fields.hasErrors('symptoms')} ? 'is-invalid'" required></textarea>
+                            <div class="invalid-feedback" th:errors="*{symptoms}">Symptoms are required.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="treatmentDetails" class="form-label fw-semibold">Treatment Details *</label>
+                            <textarea id="treatmentDetails" th:field="*{treatmentDetails}" rows="3" class="form-control"
+                                      th:classappend="${#fields.hasErrors('treatmentDetails')} ? 'is-invalid'" required></textarea>
+                            <div class="invalid-feedback" th:errors="*{treatmentDetails}">Treatment details are required.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="prescription" class="form-label fw-semibold">Prescription</label>
+                            <textarea id="prescription" th:field="*{prescription}" rows="2" class="form-control"
+                                      placeholder="Medications, dosage, and frequency..."></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="notes" class="form-label fw-semibold">Additional Medical Notes</label>
+                            <textarea id="notes" th:field="*{notes}" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check p-3 bg-warning-subtle rounded border border-warning-subtle">
+                                <input class="form-check-input ms-1 me-2" type="checkbox" id="demoData" th:field="*{demoData}">
+                                <label class="form-check-label fw-semibold" for="demoData">
+                                    Mark as Academic Demonstration Data (clearly separates sample test entries from real clinical records)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <a th:href="@{/medical-records}" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save-fill me-2"></i>
+                            <span th:text="${isEdit} ? 'Update Record' : 'Save Medical Record'">Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
