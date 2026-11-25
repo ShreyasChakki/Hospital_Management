@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Doctor Management')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('doctors')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Doctor Management')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <form th:action="@{/doctors}" method="get" class="d-flex flex-wrap gap-2 flex-grow-1" style="max-width: 680px;">
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control" style="max-width: 280px;"
+                               placeholder="Search by Doctor ID, Name, Dept...">
+                        <select name="specialization" class="form-select" style="max-width: 220px;">
+                            <option value="">All Specializations</option>
+                            <option th:each="spec : ${specializations}"
+                                    th:value="${spec}"
+                                    th:text="${spec}"
+                                    th:selected="${spec == selectedSpecialization}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-funnel"></i> Filter
+                        </button>
+                        <a th:if="${(keyword != null and !keyword.isEmpty()) or (selectedSpecialization != null and !selectedSpecialization.isEmpty())}"
+                           th:href="@{/doctors}" class="btn btn-light border">Reset</a>
+                    </form>
+
+                    <a th:href="@{/doctors/new}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add New Doctor
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle hms-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>Doctor ID</th>
+                            <th>Doctor Name</th>
+                            <th>Specialization</th>
+                            <th>Department</th>
+                            <th>Contact</th>
+                            <th>Availability</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(doctors)}">
+                            <td colspan="7" class="text-center text-muted py-4">No doctors found.</td>
+                        </tr>
+                        <tr th:each="d : ${doctors}">
+                            <td><span class="hms-code-badge" th:text="${d.doctorCode}"></span></td>
+                            <td>
+                                <a th:href="@{/doctors/{id}(id=${d.id})}" class="fw-semibold text-decoration-none" th:text="${d.fullName}"></a>
+                                <div class="small text-muted" th:text="${d.qualification}"></div>
+                            </td>
+                            <td th:text="${d.specialization}"></td>
+                            <td th:text="${d.department}"></td>
+                            <td>
+                                <div th:text="${d.phoneNumber}"></div>
+                                <small class="text-muted" th:text="${d.email}"></small>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${d.availabilityStatus.name() == 'AVAILABLE'} ? 'bg-success' : (${d.availabilityStatus.name() == 'ON_LEAVE'} ? 'bg-warning text-dark' : 'bg-secondary')"
+                                      th:text="${d.availabilityStatus.displayName}"></span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/doctors/{id}(id=${d.id})}" class="btn btn-outline-primary" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/doctors/{id}/edit(id=${d.id})}" class="btn btn-outline-secondary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger" title="Delete"
+                                            th:attr="data-confirm-action=@{/doctors/{id}/delete(id=${d.id})},data-confirm-message='Delete doctor ' + ${d.fullName} + ' (' + ${d.doctorCode} + ')?'">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
