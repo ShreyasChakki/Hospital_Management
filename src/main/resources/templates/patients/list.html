@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Patient Management')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('patients')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Patient Management')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <form th:action="@{/patients}" method="get" class="d-flex gap-2 flex-grow-1" style="max-width: 480px;">
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                               placeholder="Search by Patient ID (e.g. PAT-2026) or Name...">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a th:if="${keyword != null and !keyword.isEmpty()}" th:href="@{/patients}" class="btn btn-light border">Reset</a>
+                    </form>
+
+                    <a th:href="@{/patients/new}" class="btn btn-primary">
+                        <i class="bi bi-person-plus-fill me-2"></i>Register New Patient
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle hms-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Full Name</th>
+                            <th>Age / Gender</th>
+                            <th>Blood Group</th>
+                            <th>Phone</th>
+                            <th>Registration Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(patients)}">
+                            <td colspan="7" class="text-center text-muted py-4">No patients found matching your criteria.</td>
+                        </tr>
+                        <tr th:each="p : ${patients}">
+                            <td><span class="hms-code-badge" th:text="${p.patientCode}"></span></td>
+                            <td>
+                                <a th:href="@{/patients/{id}(id=${p.id})}" class="fw-semibold text-decoration-none" th:text="${p.fullName}"></a>
+                                <div class="small text-muted" th:text="${p.email != null ? p.email : 'No email'}"></div>
+                            </td>
+                            <td th:text="${p.age} + ' yrs / ' + ${p.gender}"></td>
+                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle" th:text="${p.bloodGroup}"></span></td>
+                            <td th:text="${p.phoneNumber}"></td>
+                            <td th:text="${p.registrationDate}"></td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{/patients/{id}(id=${p.id})}" class="btn btn-outline-primary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/medical-records/patient/{id}(id=${p.id})}" class="btn btn-outline-info" title="Medical History">
+                                        <i class="bi bi-journal-medical"></i>
+                                    </a>
+                                    <a th:href="@{/patients/{id}/edit(id=${p.id})}" class="btn btn-outline-secondary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger" title="Delete"
+                                            th:attr="data-confirm-action=@{/patients/{id}/delete(id=${p.id})},data-confirm-message='Delete patient ' + ${p.fullName} + ' (' + ${p.patientCode} + ') and all linked records?'">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

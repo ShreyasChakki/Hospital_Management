@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Patient Details')}"></head>
+<body>
+
+<div class="hms-wrapper">
+    <div th:replace="~{fragments/layout :: sidebar('patients')}"></div>
+
+    <div class="hms-main">
+        <div th:replace="~{fragments/layout :: topbar('Patient Profile')}"></div>
+
+        <main class="hms-content">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="hms-card p-4 mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 pb-3 border-bottom">
+                    <div>
+                        <span class="hms-code-badge mb-2 d-inline-block" th:text="${patient.patientCode}"></span>
+                        <h4 class="fw-bold mb-1" th:text="${patient.fullName}"></h4>
+                        <span class="text-muted small" th:text="'Registered on ' + ${patient.registrationDate}"></span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:href="@{/appointments/new(patientId=${patient.id})}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-calendar-plus me-1"></i>Book Appointment
+                        </a>
+                        <a th:href="@{/medical-records/patient/{id}(id=${patient.id})}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-journal-medical me-1"></i>Medical History
+                        </a>
+                        <a th:href="@{/patients/{id}/edit(id=${patient.id})}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                th:attr="data-confirm-action=@{/patients/{id}/delete(id=${patient.id})},data-confirm-message='Permanently delete patient ' + ${patient.fullName} + '?'">
+                            <i class="bi bi-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="text-muted small">Age / Date of Birth</div>
+                        <div class="fw-semibold" th:text="${patient.age} + ' years' + (${patient.dateOfBirth != null} ? ' (' + ${patient.dateOfBirth} + ')' : '')"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Gender</div>
+                        <div class="fw-semibold" th:text="${patient.gender}"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Blood Group</div>
+                        <div><span class="badge bg-danger-subtle text-danger border border-danger-subtle" th:text="${patient.bloodGroup}"></span></div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted small">Phone Number</div>
+                        <div class="fw-semibold" th:text="${patient.phoneNumber}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-muted small">Email Address</div>
+                        <div class="fw-semibold" th:text="${patient.email != null ? patient.email : 'Not provided'}"></div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="text-muted small">Residential Address</div>
+                        <div class="fw-semibold" th:text="${patient.address}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="hms-card p-4 h-100">
+                        <h6 class="fw-bold text-primary mb-3">Appointment History</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle hms-table mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${#lists.isEmpty(appointments)}">
+                                    <td colspan="4" class="text-center text-muted py-3">No appointments recorded.</td>
+                                </tr>
+                                <tr th:each="a : ${appointments}">
+                                    <td><a th:href="@{/appointments/{id}(id=${a.id})}" class="hms-code-badge text-decoration-none" th:text="${a.appointmentCode}"></a></td>
+                                    <td th:text="${a.doctorName}"></td>
+                                    <td th:text="${a.appointmentDate} + ' ' + ${a.appointmentTime}"></td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${a.status.name() == 'SCHEDULED'} ? 'bg-primary' : (${a.status.name() == 'COMPLETED'} ? 'bg-success' : 'bg-secondary')"
+                                              th:text="${a.status.displayName}"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="hms-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-primary mb-0">Recent Medical Records</h6>
+                            <a th:href="@{/medical-records/new(patientId=${patient.id})}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-plus-lg"></i> Add Record
+                            </a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li th:if="${#lists.isEmpty(medicalRecords)}" class="list-group-item text-muted text-center">
+                                No medical records found for this patient.
+                            </li>
+                            <li th:each="r : ${medicalRecords}" class="list-group-item px-0">
+                                <div class="d-flex justify-content-between">
+                                    <strong th:text="${r.diagnosis}"></strong>
+                                    <small class="text-muted" th:text="${r.visitDate}"></small>
+                                </div>
+                                <div class="small text-muted" th:text="'Attending: ' + ${r.doctorName}"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
