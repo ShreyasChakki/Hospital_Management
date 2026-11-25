@@ -101,31 +101,58 @@ To optionally load sample academic demonstration data at startup:
 $env:HMS_SEED_DEMO_DATA="true"
 ```
 
-## 8. Installation & Execution Instructions
+## 8. Installation & Execution Instructions (For Anyone Cloning This Repository)
 
-### Step 1: Prepare MySQL Database
-Ensure MySQL 8.0 is running on `localhost:3306`. Optionally run the SQL scripts manually:
+> **Important Security Note:** Personal MySQL passwords are **never** stored in this repository. Anyone cloning this project should supply their own local MySQL credentials using **Option A** (environment variables) or **Option B** (`application.properties`).
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/ShreyasChakki/Hospital_Management.git
+cd Hospital_Management
+```
+
+### Step 2: Configure Your Local MySQL Credentials
+Ensure MySQL 8.0 is running on `localhost:3306`.
+
+- **Option A — Environment Variables (Recommended):**
+  - **Windows (PowerShell):**
+    ```powershell
+    $env:DB_USERNAME="root"
+    $env:DB_PASSWORD="your_mysql_password"
+    $env:HMS_SEED_DEMO_DATA="true"   # optional: auto-loads sample data on first run
+    ```
+  - **macOS / Linux:**
+    ```bash
+    export DB_USERNAME=root
+    export DB_PASSWORD=your_mysql_password
+    export HMS_SEED_DEMO_DATA=true
+    ```
+- **Option B — Edit `application.properties` Locally:**
+  Update `src/main/resources/application.properties` on your machine:
+  ```properties
+  spring.datasource.username=${DB_USERNAME:root}
+  spring.datasource.password=${DB_PASSWORD:your_mysql_password}
+  ```
+
+*(Optional)* You can also import the SQL scripts manually:
 ```bash
 mysql -u root -p < database/schema.sql
 mysql -u root -p < database/sample_data.sql
 ```
+Otherwise, Spring Boot automatically creates `hospital_management_db` and all required tables on startup.
 
-### Step 2: Build the Application
+### Step 3: Build & Run Unit Tests
 ```bash
 mvn clean install
-```
-*(If using IntelliJ IDEA's bundled Maven on Windows without global `mvn` on `PATH`, run `"C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2024.2.4\plugins\maven\lib\maven3\bin\mvn.cmd" clean install`.)*
-
-### Step 3: Run Unit Tests
-```bash
 mvn test
 ```
+*(If using IntelliJ IDEA's bundled Maven on Windows without global `mvn` on `PATH`, run `"C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2024.2.4\plugins\maven\lib\maven3\bin\mvn.cmd" clean install`.)*
 
 ### Step 4: Start the Application
 ```bash
 mvn spring-boot:run
 ```
-Access the application at: **`http://localhost:8080`**
+Access the application at: **`http://localhost:8080`** (Default login: `admin` / `Admin@123`).
 
 ## 9. Admin Login & Credential Management
 - On first startup, `AdminDataInitializer` checks if any administrator exists in `admins`. If empty, it creates a default administrator account with a **BCrypt-hashed** password.
